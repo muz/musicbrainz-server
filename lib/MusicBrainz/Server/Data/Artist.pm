@@ -26,8 +26,8 @@ extends 'MusicBrainz::Server::Data::CoreEntity';
 with 'MusicBrainz::Server::Data::Role::Annotation' => { type => 'artist' };
 with 'MusicBrainz::Server::Data::Role::Name' => { name_table => 'artist_name' };
 with 'MusicBrainz::Server::Data::Role::Alias' => { type => 'artist' };
-with 'MusicBrainz::Server::Data::Role::IPI' => { type => 'artist' };
-with 'MusicBrainz::Server::Data::Role::CoreEntityCache' => { prefix => 'artist' };
+#with 'MusicBrainz::Server::Data::Role::IPI' => { type => 'artist' };
+#with 'MusicBrainz::Server::Data::Role::CoreEntityCache' => { prefix => 'artist' };
 with 'MusicBrainz::Server::Data::Role::Editable' => { table => 'artist' };
 with 'MusicBrainz::Server::Data::Role::Rating' => { type => 'artist' };
 with 'MusicBrainz::Server::Data::Role::Tag' => { type => 'artist' };
@@ -408,6 +408,29 @@ sub is_empty {
         )
 EOSQL
 }
+
+use MusicBrainz::Server::Data::NES::Artist;
+use MusicBrainz::Server::Data::NES::Delegate::IPI;
+
+has nes => (
+    is => 'ro',
+    lazy => 1,
+    default => sub { MusicBrainz::Server::Data::NES::Artist->new( c => shift->c ) }
+);
+
+has nes_ipi => (
+    is => 'ro',
+    lazy => 1,
+    default => sub {
+        MusicBrainz::Server::Data::NES::Delegate::IPI->new(
+            c => shift->c,
+            type => 'artist'
+        )
+    }
+);
+
+sub get_by_gid { shift->nes->get_by_mbid(@_) }
+sub ipi { shift->nes_ipi }
 
 __PACKAGE__->meta->make_immutable;
 no Moose;

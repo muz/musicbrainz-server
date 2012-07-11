@@ -44,6 +44,8 @@ sub models {
 
     for my $model (sort $searcher->plugins) {
         next if $model =~ /Data::Role/;
+        next if $model =~ /Delegate/;
+
         my ($model_name) = ($model =~ m/.*::Data::(.*)/);
         $model =~ s/^MusicBrainz::Server::Data:://;
 

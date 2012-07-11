@@ -43,7 +43,7 @@ sub l_type_name
 
 has 'gender_id' => (
     is => 'rw',
-    isa => 'Int'
+    isa => 'Maybe[Int]'
 );
 
 has 'gender' => (
@@ -65,7 +65,7 @@ sub l_gender_name
 
 has 'country_id' => (
     is => 'rw',
-    isa => 'Int'
+    isa => 'Maybe[Int]'
 );
 
 has 'country' => (
