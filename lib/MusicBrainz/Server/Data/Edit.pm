@@ -384,6 +384,12 @@ sub create
     # Save quality level
     $edit->quality($quality);
 
+    # Somewhat serialize these edits per editor
+    $self->c->sql->do(
+        'SELECT id FROM editor WHERE id = ? FOR UPDATE',
+        $edit->editor_id
+    );
+
     $edit->insert;
 
     my $now = DateTime->now;
