@@ -1034,5 +1034,30 @@ AS $$
   END;
 $$ LANGUAGE 'plpgsql';
 
+CREATE OR REPLACE FUNCTION delete_unused_tag(tag_id INT)
+RETURNS void AS $$
+  BEGIN
+    DELETE FROM tag WHERE id = tag_id;
+  EXCEPTION
+    WHEN foreign_key_violation THEN RETURN;
+  END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION trg_delete_unused_tag()
+RETURNS trigger AS $$
+  BEGIN
+    PERFORM delete_unused_tag(NEW.id);
+    RETURN NULL;
+  END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION trg_delete_unused_tag_ref()
+RETURNS trigger AS $$
+  BEGIN
+    PERFORM delete_unused_tag(OLD.tag);
+    RETURN NULL;
+  END;
+$$ LANGUAGE 'plpgsql';
+
 COMMIT;
 -- vi: set ts=4 sw=4 et :
